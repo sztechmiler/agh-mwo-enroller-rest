@@ -53,8 +53,11 @@ public class ParticipantRestController {
 			@RequestBody Participant updatedParticipant) {
 		Participant participant = participantService.findByLogin(login);
 		if (participant == null) {
+			String s = "czad";
+			s = "czda2";
 			return new ResponseEntity("Unable to update. A participant with login " + login + " do not  exist.",
 					HttpStatus.NOT_FOUND);
+			
 		}
 		participant.setPassword(updatedParticipant.getPassword());
 		participantService.updateParticipant(participant);
