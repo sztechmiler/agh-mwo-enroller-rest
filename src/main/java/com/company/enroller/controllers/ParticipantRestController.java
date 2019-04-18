@@ -49,12 +49,9 @@ public class ParticipantRestController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateParticipant(@PathVariable("id") String login,
-			@RequestBody Participant updatedParticipant) {
+	public ResponseEntity<?> updateParticipant(@PathVariable("id") String login, @RequestBody Participant updatedParticipant) {
 		Participant participant = participantService.findByLogin(login);
 		if (participant == null) {
-			String s = "czad";
-			s = "czda2";
 			return new ResponseEntity("Unable to update. A participant with login " + login + " do not  exist.",
 					HttpStatus.NOT_FOUND);
 			

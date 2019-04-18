@@ -24,9 +24,6 @@ public class ParticipantService {
 	}
 	public Participant findByLogin(String login) {
 		return (Participant)connector.getSession().get(Participant.class, login);
-//		Criteria criteria = connector.getSession().createCriteria("login", login);
-//		Participant part = (Participant) criteria.add(Restrictions.eq("login", login));
-//		return part;
 	}
 
 	public Participant addParticipant(Participant participant) {
