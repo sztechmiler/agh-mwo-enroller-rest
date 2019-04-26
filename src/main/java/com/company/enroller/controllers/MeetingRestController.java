@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jboss.logging.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.company.enroller.model.Meeting;
@@ -38,7 +40,8 @@ public class MeetingRestController {
 		Collection<Meeting> meetings = meetingService.getAll();
 		return new ResponseEntity<Collection<Meeting>>(meetings, HttpStatus.OK);
 	}
-
+	
+	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> getMeeting(@PathVariable("id") long id) {
 		Meeting meeting = meetingService.findById(id);
@@ -124,21 +127,36 @@ public class MeetingRestController {
 		return new ResponseEntity(msg, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "?sort", method = RequestMethod.GET)
-	public ResponseEntity<?> sortMeetingByField() {
-		Comparator<Meeting> comparator = new Comparator<Meeting>() {
-			@Override
-			public int compare(Meeting mLeft, Meeting mRight) {
-				return mLeft.getTitle().compareTo(mRight.getTitle());
-			}
-			
-		};
-		Collection<Meeting> meetings = meetingService.getAll();
-		Meeting[] meetingsList = meetings.toArray(new Meeting[meetings.size()]);
-		Arrays.sort(meetingsList, comparator);
-		Collection<Meeting> sortedMeetings = Arrays.asList(meetingsList);
-		
-		return new ResponseEntity(sortedMeetings + "/n/n/n" + meetingsList + "/n/n/n" + meetings, HttpStatus.OK);
+	@RequestMapping(value = "", method = RequestMethod.GET, params = "sort")
+	public ResponseEntity<?> sortMeetingByField(@RequestParam("sort") String sort) {
+		Collection<Meeting> meetings = meetingService.getAllSorted(sort);
+		return new ResponseEntity(meetings, HttpStatus.OK);
+	}
+	@RequestMapping(value = "", method = RequestMethod.GET, params = {"title", "description"})
+	public ResponseEntity<?> serachByTitileAndDescription(@RequestParam("title") String title, @RequestParam("description") String description) {
+		Collection<Meeting> meetings = meetingService.getMeetingsByTitleAndDescription(title, description);
+		if (meetings == null ){
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity(	meetings, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "", method = RequestMethod.GET, params = {"title"})
+	public ResponseEntity<?> serachByTitile(@RequestParam("title") String title) {
+		Collection<Meeting> meetings = meetingService.getMeetingsByTitle(title);
+		if (meetings == null ){
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity(	meetings, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "", method = RequestMethod.GET, params = {"description"})
+	public ResponseEntity<?> serachByDescription(@RequestParam("description") String description) {
+		Collection<Meeting> meetings = meetingService.getMeetingsByDescription( description);
+		if (meetings == null ){
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity(	meetings, HttpStatus.OK);
 	}
 
 }
